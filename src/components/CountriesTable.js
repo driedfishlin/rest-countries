@@ -1,23 +1,41 @@
 import React, { useEffect, useState } from 'react';
 
-const th_class = `border-2 border-th-indigo bg-th-indigo text-white py-2 px-5`;
+const th_class = `border-2 border-th-indigo bg-th-indigo text-white py-2 px-5 font-Comfortaa`;
 
-const TdConponent = () => {
-	const td_class = `border-2 border-th-indigo text-th-indigo py-2 px-5`;
+const TdComponent = ({ item }) => {
+	const td_class = `border-2 border-th-indigo text-th-indigo py-2 px-5 font-roboto font-light`;
+	const {
+		flag,
+		name,
+		alpha2Code,
+		alpha3Code,
+		nativeName,
+		altSpellings,
+		callingCodes,
+	} = item;
 	return (
 		<tr>
-			<td className={td_class}>O</td>
-			<td className={td_class}>美國</td>
-			<td className={td_class}>123</td>
-			<td className={td_class}>hahaha</td>
-			<td className={td_class}>?</td>
-			<td className={td_class}>02</td>
+			<td className={td_class}>
+				<div className={`w-10 h-10 rounded-full overflow-hidden`}>
+					<img
+						className={`h-full object-cover`}
+						src={flag}
+						alt={`national flag`}
+					/>
+				</div>
+			</td>
+			<td className={td_class}>{name}</td>
+			<td className={td_class}>{alpha2Code + ' / ' + alpha3Code}</td>
+			<td className={td_class}>{nativeName}</td>
+			<td className={td_class}>{altSpellings[0]}</td>
+			<td className={td_class}>{callingCodes}</td>
 		</tr>
 	);
 };
 
-const CountriesCountriesTable = () => {
-	const [originDataState, setOriginDataState] = useState(null);
+const CountriesCountriesTable = ({ searchInputState, usePageState }) => {
+	const [nationalDataState, setNationalDataState] = useState(null);
+	const [pageState, setPageState] = usePageState;
 	useEffect(() => {
 		try {
 			fetch('https://restcountries.eu/rest/v2/all', {
@@ -39,7 +57,8 @@ const CountriesCountriesTable = () => {
 						callingCodes: item.callingCodes,
 					}));
 					console.log(filteredData[0]);
-					setOriginDataState(filteredData);
+					setPageState([1, filteredData.length / 25]);
+					setNationalDataState(filteredData);
 				});
 		} catch (error) {
 			//TODO> error handel
@@ -55,18 +74,22 @@ const CountriesCountriesTable = () => {
 					<th className={th_class}>FLAG</th>
 					<th className={th_class}>NAME</th>
 					<th className={th_class}>CODE</th>
-					<th className={th_class}>LANGUAGE</th>
+					<th className={th_class}>NATIVE NAME</th>
 					<th className={th_class}>ALT SPELLING</th>
 					<th className={th_class}>CALLING CODE</th>
 				</tr>
 			</thead>
 			<tbody>
-				<TdConponent />
-				<TdConponent />
-				<TdConponent />
-				<TdConponent />
-				<TdConponent />
-				<TdConponent />
+				{nationalDataState !== null && searchInputState === ''
+					? nationalDataState
+							.map(item => (
+								<TdComponent item={item} key={item.name} />
+							))
+							.slice(
+								(pageState[0] - 1) * 25,
+								(pageState[0] - 1) * 25 + 25
+							)
+					: null}
 			</tbody>
 		</table>
 	);
