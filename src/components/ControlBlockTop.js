@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as SearchIcon } from '../image/search_icon.svg';
 
-const ControlBlockTop = ({ useSearchState }) => {
+const ControlBlockTop = ({ useSearchState, useNationalDataState }) => {
 	const [searchInputState, setSearchInputState] = useSearchState;
+	const [_, setNationalDataState] = useNationalDataState;
+	const [arrowTextDirection, setArrowTextDirection] = useState('↓');
 	const onInputChange = event => {
 		console.log(event.target.value);
 		setSearchInputState(event.target.value);
@@ -23,14 +25,24 @@ const ControlBlockTop = ({ useSearchState }) => {
 					Search
 				</button> */}
 			</div>
-			<button className={`focus:outline-none`}>
+			<button
+				className={`focus:outline-none`}
+				onClick={() => {
+					setNationalDataState(prevState => {
+						const copyState = JSON.parse(JSON.stringify(prevState));
+						return copyState.reverse();
+					});
+					setArrowTextDirection(prevState =>
+						prevState === '↑' ? '↓' : '↑'
+					);
+				}}>
 				<p
 					className={`inline-block text-th-indigo m-2 font-roboto font-bold`}>
 					sort A-Z
 				</p>
 				<div
 					className={`inline-block border-th-indigo border-2 rounded-full w-7 h-7 text-th-indigo p-1 leading-4 text-sm`}>
-					↑
+					{arrowTextDirection}
 				</div>
 			</button>
 		</div>
