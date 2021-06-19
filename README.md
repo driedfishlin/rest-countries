@@ -7,3 +7,7 @@
 ．實作資料排序與分頁功能
 
 ．實作模糊搜尋（使用 Fuse.js）
+
+#### GitHub Page
+
+[網站連結](https://driedfishlin.github.io/rest-countries/)
