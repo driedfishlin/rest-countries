@@ -25,6 +25,13 @@ const ControlBlockTop = ({
 		setSearchResultState(searchResult);
 		setSearchInputState(event.target.value);
 	};
+	const sortButtonClick = () => {
+		setNationalDataState(prevState => {
+			const copyState = JSON.parse(JSON.stringify(prevState));
+			return copyState.reverse();
+		});
+		setArrowTextDirection(prevState => (prevState === '↑' ? '↓' : '↑'));
+	};
 	return (
 		<div className={`flex justify-between items-center`}>
 			<div
@@ -38,16 +45,10 @@ const ControlBlockTop = ({
 				<SearchIcon className={`w-4 h-4 ml-5 mr-5 opacity-40`} />
 			</div>
 			<button
-				className={`focus:outline-none`}
-				onClick={() => {
-					setNationalDataState(prevState => {
-						const copyState = JSON.parse(JSON.stringify(prevState));
-						return copyState.reverse();
-					});
-					setArrowTextDirection(prevState =>
-						prevState === '↑' ? '↓' : '↑'
-					);
-				}}>
+				className={`focus:outline-none ${
+					searchInputState && `opacity-40 cursor-not-allowed`
+				}`}
+				onClick={searchInputState ? null : sortButtonClick}>
 				<p
 					className={`inline-block text-th-indigo m-2 font-roboto font-bold`}>
 					sort A-Z

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import Fuse from 'fuse.js';
 
 import ControlBlockTop from './ControlBlockTop';
 import CountriesTable from './CountriesTable';

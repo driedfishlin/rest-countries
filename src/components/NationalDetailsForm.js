@@ -3,7 +3,6 @@ import React from 'react';
 const pClass = `tracking-normal text-sm`;
 
 const NationalDetailsForm = ({ closeFn, data }) => {
-	console.log(data);
 	return (
 		<div className={`fixed top-0 left-0`}>
 			<div // background
