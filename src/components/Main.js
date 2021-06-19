@@ -6,7 +6,7 @@ import ControlBLockBottom from './ControlBLockBottom';
 
 const fuse = { fuse: null };
 
-const Main = () => {
+const Main = ({ useErrorState }) => {
 	const [searchInputState, setSearchInputState] = useState('');
 	// main data (origin data from API)
 	const useNationalDataState = useState(null);
@@ -29,6 +29,7 @@ const Main = () => {
 				usePageState={usePageState}
 				fuse={fuse}
 				useSearchResultState={useSearchResultState}
+				useErrorState={useErrorState}
 			/>
 			<ControlBLockBottom usePageState={usePageState} />
 		</main>

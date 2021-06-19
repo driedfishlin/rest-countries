@@ -3,41 +3,9 @@ import Fuse from 'fuse.js';
 
 import NationalDetailsForm from './NationalDetailsForm';
 import { fuzzySearchOptions, itemsLimit } from '../config';
+import NationalItem from './NationalItem';
 
 const th_class = `border-2 border-th-indigo bg-th-indigo text-white py-2 px-5 font-Comfortaa`;
-
-const NationalItem = ({ item, onClick }) => {
-	const td_class = `border-2 border-th-indigo text-th-indigo py-2 px-5 font-roboto font-light`;
-	const {
-		flag,
-		name,
-		alpha2Code,
-		alpha3Code,
-		nativeName,
-		altSpellings,
-		callingCodes,
-	} = item;
-	return (
-		<tr onClick={onClick} className={`cursor-pointer hover:bg-purple-100`}>
-			<td className={td_class}>
-				<div className={`w-10 h-10 rounded-full overflow-hidden`}>
-					<img
-						className={`h-full object-cover`}
-						src={flag}
-						alt={`national flag`}
-					/>
-				</div>
-			</td>
-			<td className={td_class + ` w-1/5`}>{name}</td>
-			<td className={td_class + ` whitespace-nowrap`}>
-				{alpha2Code + ' / ' + alpha3Code}
-			</td>
-			<td className={td_class}>{nativeName}</td>
-			<td className={td_class}>{altSpellings[0]}</td>
-			<td className={td_class}>{callingCodes}</td>
-		</tr>
-	);
-};
 
 const CountriesCountriesTable = ({
 	searchInputState,
@@ -45,10 +13,12 @@ const CountriesCountriesTable = ({
 	usePageState,
 	fuse,
 	useSearchResultState,
+	useErrorState,
 }) => {
 	const [nationalDataState, setNationalDataState] = useNationalDataState;
 	const [pageState, setPageState] = usePageState;
 	const searchResultState = useSearchResultState[0];
+	const setErrorState = useErrorState[1];
 	const [detailsFormState, setDetailsState] = useState(null);
 	useEffect(() => {
 		try {
@@ -80,8 +50,7 @@ const CountriesCountriesTable = ({
 					fuse.fuse = new Fuse(filteredData, fuzzySearchOptions);
 				});
 		} catch (error) {
-			//TODO> error handel
-			console.log(error);
+			setErrorState(`發生錯誤，無法取得資料！`);
 		}
 	}, []);
 
