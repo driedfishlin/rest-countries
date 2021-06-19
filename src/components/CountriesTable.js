@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Fuse from 'fuse.js';
+
 import NationalDetailsForm from './NationalDetailsForm';
+import { fuzzySearchOptions, itemsLimit } from '../config';
 
 const th_class = `border-2 border-th-indigo bg-th-indigo text-white py-2 px-5 font-Comfortaa`;
 
@@ -40,9 +43,12 @@ const CountriesCountriesTable = ({
 	searchInputState,
 	useNationalDataState,
 	usePageState,
+	fuse,
+	useSearchResultState,
 }) => {
 	const [nationalDataState, setNationalDataState] = useNationalDataState;
 	const [pageState, setPageState] = usePageState;
+	const searchResultState = useSearchResultState[0];
 	const [detailsFormState, setDetailsState] = useState(null);
 	useEffect(() => {
 		try {
@@ -55,7 +61,6 @@ const CountriesCountriesTable = ({
 					return response.json();
 				})
 				.then(data => {
-					console.log(data[0]);
 					const filteredData = data.map(item => ({
 						flag: item.flag,
 						name: item.name,
@@ -70,9 +75,9 @@ const CountriesCountriesTable = ({
 						latlng: item.latlng,
 						languages: item.languages,
 					}));
-					// console.log(filteredData[0]);
-					setPageState([1, filteredData.length / 25]);
+					setPageState([1, filteredData.length / itemsLimit]);
 					setNationalDataState(filteredData);
+					fuse.fuse = new Fuse(filteredData, fuzzySearchOptions);
 				});
 		} catch (error) {
 			//TODO> error handel
@@ -112,10 +117,12 @@ const CountriesCountriesTable = ({
 					</tr>
 				</thead>
 				<tbody>
-					{nationalDataState !== null && searchInputState === ''
-						? nationalDataState
+					{(function () {
+						if (nationalDataState === null) return null;
+						// all nationals list
+						if (searchInputState === '') {
+							return nationalDataState
 								.map(item => {
-									// console.log('re-render');
 									return (
 										<NationalItem
 											item={item}
@@ -127,10 +134,30 @@ const CountriesCountriesTable = ({
 									);
 								})
 								.slice(
-									(pageState[0] - 1) * 25,
-									(pageState[0] - 1) * 25 + 25
-								)
-						: null}
+									(pageState[0] - 1) * itemsLimit,
+									(pageState[0] - 1) * itemsLimit + itemsLimit
+								);
+						}
+						// filtered nationals lst
+						if (searchInputState !== '')
+							return searchResultState
+								.map(item => {
+									return (
+										<NationalItem
+											item={item.item}
+											key={item.item.name}
+											onClick={() =>
+												setDetailsState(item.item)
+											}
+										/>
+									);
+								})
+								.slice(
+									(pageState[0] - 1) * itemsLimit,
+									(pageState[0] - 1) * itemsLimit + itemsLimit
+								);
+						return null;
+					})()}
 				</tbody>
 			</table>
 			{detailsFormState && (

@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
-import { ReactComponent as SearchIcon } from '../image/search_icon.svg';
 
-const ControlBlockTop = ({ useSearchState, useNationalDataState }) => {
+import { ReactComponent as SearchIcon } from '../image/search_icon.svg';
+import { itemsLimit } from '../config';
+
+const ControlBlockTop = ({
+	useSearchState,
+	useNationalDataState,
+	fuse,
+	useSearchResultState,
+	usePageState,
+}) => {
 	const [searchInputState, setSearchInputState] = useSearchState;
-	const [_, setNationalDataState] = useNationalDataState;
+	const [nationalDataState, setNationalDataState] = useNationalDataState;
+	const setSearchResultState = useSearchResultState[1];
+	const setPageState = usePageState[1];
 	const [arrowTextDirection, setArrowTextDirection] = useState('↓');
 	const onInputChange = event => {
-		console.log(event.target.value);
+		const searchResult = fuse.fuse.search(event.target.value);
+		if (event.target.value === '') {
+			setPageState([1, Math.ceil(nationalDataState.length / itemsLimit)]);
+		} else {
+			setPageState([1, Math.ceil(searchResult.length / itemsLimit)]);
+		}
+		setSearchResultState(searchResult);
 		setSearchInputState(event.target.value);
 	};
 	return (
@@ -20,10 +36,6 @@ const ControlBlockTop = ({ useSearchState, useNationalDataState }) => {
 					onChange={onInputChange}
 				/>
 				<SearchIcon className={`w-4 h-4 ml-5 mr-5 opacity-40`} />
-				{/* <button
-					className={`h-full bg-th-indigo rounded-full pl-5 pr-5 ml-3 text-white`}>
-					Search
-				</button> */}
 			</div>
 			<button
 				className={`focus:outline-none`}
